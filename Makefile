@@ -1,5 +1,5 @@
-CC = icc -static
-CXX = icpc -static
+CC = gcc -static -fPIC
+CXX = g++ -static -fPIC
 AR = ar rcu 
 
 RM = rm -f

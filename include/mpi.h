@@ -8,11 +8,17 @@
 extern "C" {
 #endif
 
+#define MPI_SUCCESS 0
+
 /* Communicators */
 typedef int MPI_Comm;
 #define MPI_COMM_WORLD ((MPI_Comm)91)
 #define MPI_COMM_SELF  ((MPI_Comm)92)
 #define MPI_COMM_NULL  ((MPI_Comm)0)
+
+
+typedef int MPI_Fint;
+MPI_Comm MPI_Comm_f2c(MPI_Fint comm);
 
 /* Define MPI_Datatype */
 typedef size_t MPI_Datatype;
@@ -43,16 +49,25 @@ typedef int MPI_Op;
 #define MPI_SUM ((MPI_Op)0)
 #define MPI_MIN ((MPI_Op)0)
 #define MPI_MAX ((MPI_Op)0)
+#define MPI_OP_NULL ((MPI_Op)0)
 
 typedef void (*MPI_User_function)(void*, void*, int*, MPI_Datatype*);
 int MPI_Type_contiguous(int count, MPI_Datatype oldtype, MPI_Datatype *newtype);
-int MPI_Op_create(MPI_User_function *user_fn, int commute, MPI_Op *op);
+int MPI_Op_create(MPI_User_function user_fn, int commute, MPI_Op *op);
 int MPI_Type_commit(MPI_Datatype *datatype);
 
 
 /* Basic MPI functions */
 int MPI_Init( int *argc, char ***argv);
+int MPI_Init_thread( int *argc, char ***argv, int required, int *provided );
 int MPI_Finalize(void);
+enum {
+  MPI_THREAD_SINGLE,
+  MPI_THREAD_FUNNELED,
+  MPI_THREAD_SERIALIZED,
+  MPI_THREAD_MULTIPLE
+};
+
 
 int MPI_Comm_rank( MPI_Comm comm, int *rank );
 int MPI_Comm_size( MPI_Comm comm, int *size );
@@ -73,6 +88,9 @@ int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int ta
 
 int MPI_Issend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag,
                MPI_Comm comm, MPI_Request *request);
+
+int MPI_Isend(const void *buf, int count, MPI_Datatype datatype, int dest, int tag,
+              MPI_Comm comm, MPI_Request *request);
 
 int MPI_Sendrecv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  int dest, int sendtag,
@@ -108,6 +126,11 @@ int MPI_Alltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                  void *recvbuf, int recvcount, MPI_Datatype recvtype,
                  MPI_Comm comm);
 
+int MPI_Alltoallv(const void *sendbuf, const int *sendcounts,
+                  const int *sdispls, MPI_Datatype sendtype, void *recvbuf,
+                  const int *recvcounts, const int *rdispls, MPI_Datatype recvtype,
+                  MPI_Comm comm);
+
 
 /* Miscellaneous MPI functions */
 int MPI_Comm_split(MPI_Comm comm, int color, int key, MPI_Comm *newcomm);
@@ -120,6 +143,8 @@ int MPI_Wait(MPI_Request *request, MPI_Status *status);
 
 int MPI_Waitall(int count, MPI_Request array_of_requests[],
                 MPI_Status array_of_statuses[]);
+#define MPI_STATUS_IGNORE ((MPI_Status *) 0)
+#define MPI_STATUSES_IGNORE ((MPI_Status *) 0)
 
 #ifdef __cplusplus
 }
