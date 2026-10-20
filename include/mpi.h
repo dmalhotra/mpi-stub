@@ -1,3 +1,6 @@
+// Copyright (C) 2014-2026 Dhairya Malhotra
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef _MPI_STUB_H_
 #define _MPI_STUB_H_
 

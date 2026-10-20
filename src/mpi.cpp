@@ -1,3 +1,6 @@
+// Copyright (C) 2014-2026 Dhairya Malhotra
+// SPDX-License-Identifier: Apache-2.0
+
 #include <mpi.h>
 #include <string.h>
 #include <assert.h>
